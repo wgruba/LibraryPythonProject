@@ -28,7 +28,6 @@ class Register(tk.Frame):
             for userData in logins:
                 if userData[0] == login.get():
                     UserExists = True
-
             if UserExists:
                 tk.messagebox.showinfo('Info', 'User with this login alredy exist!! Try Again')
             else:

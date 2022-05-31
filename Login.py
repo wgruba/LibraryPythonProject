@@ -6,8 +6,6 @@ from tkinter.ttk import Label, Entry, Checkbutton, Button
 from UserActions import UserActions
 
 class Login(tk.Frame):
-    LogedUser = None
-
     def __init__(self, master):
         tk.Frame.__init__(self, master)
         Label(self, text="Login").grid(row=1,column=1)
@@ -29,8 +27,9 @@ class Login(tk.Frame):
             success = False
             for userData in logins:
                 if userData[0] == login and userData[1] == password:
-                    tk.messagebox.showinfo('Info', 'Login Succesfull' + userData[2])
-                    self.LogedUser = userData[0]
+                    tk.messagebox.showinfo('Info', 'Login Succesfull')
+                    f = open("LogedUser.txt", "w")
+                    f.write(userData[0])
                     success = True
             connection.commit()
             connection.close()

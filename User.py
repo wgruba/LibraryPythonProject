@@ -19,7 +19,7 @@ class User:
     def loadBooks(self,name):
         connection = sqlite3.connect('Library_dataBase.db')
         coursor = connection.cursor()
-        coursor.execute("SELECT * FROM books WHERE name = " + name)
+        coursor.execute("SELECT * FROM books")
         booksData = coursor.fetchall()
         for book in booksData:
             if book[0] == name:
@@ -37,7 +37,6 @@ class User:
         for user in usersData:
             if user[0] == self.login:
                 user[2] = str
-
         connection.commit()
         connection.close()
 
