@@ -6,6 +6,8 @@ from tkinter.ttk import Label, Entry, Checkbutton, Button
 from UserActions import UserActions
 
 class Login(tk.Frame):
+    LogedUser = None
+
     def __init__(self, master):
         tk.Frame.__init__(self, master)
         Label(self, text="Login").grid(row=1,column=1)
@@ -22,18 +24,20 @@ class Login(tk.Frame):
             password = passwordBut.get()
             connection = sqlite3.connect('Library_dataBase.db')
             coursor = connection.cursor()
-            coursor.execute("SELECT *, oid FROM users")
+            coursor.execute("SELECT * FROM users")
             logins = coursor.fetchall()
             success = False
             for userData in logins:
                 if userData[0] == login and userData[1] == password:
-                    tk.messagebox.showinfo('Info', 'Login Succesfull')
+                    tk.messagebox.showinfo('Info', 'Login Succesfull' + userData[2])
+                    self.LogedUser = userData[0]
                     success = True
             connection.commit()
             connection.close()
             if success:
                 master.switch_frame(UserActions)
             else:
+                self.LogedUser = None
                 tk.messagebox.showinfo('Info', 'Login or Password is bad!! Try Again')
                 loginBut.delete(0,END)
                 passwordBut.delete(0, END)

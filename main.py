@@ -4,7 +4,7 @@ from PIL import ImageTk,Image
 import DataBase
 import Login as login
 import Register as register
-import DataBase as db
+
 
 
 class SampleApp(tk.Tk):

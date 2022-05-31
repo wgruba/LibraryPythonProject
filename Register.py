@@ -2,7 +2,6 @@ import sqlite3
 import tkinter as tk
 import tkinter.messagebox
 from tkinter import END
-
 import main as main
 from User import User
 from tkinter.ttk import Label, Entry, Checkbutton, Button
@@ -23,14 +22,25 @@ class Register(tk.Frame):
             event = event
             connection = sqlite3.connect('Library_dataBase.db')
             coursor = connection.cursor()
-            coursor.execute("INSERT INTO users VALUES (:login,:password)",
+            coursor.execute("SELECT * FROM users")
+            logins = coursor.fetchall()
+            UserExists = False
+            for userData in logins:
+                if userData[0] == login.get():
+                    UserExists = True
+
+            if UserExists:
+                tk.messagebox.showinfo('Info', 'User with this login alredy exist!! Try Again')
+            else:
+                coursor.execute("INSERT INTO users VALUES (:login,:password,:ReadedBooks)",
                             {
                                 'login': login.get(),
-                                'password': password.get()
+                                'password': password.get(),
+                                'ReadedBooks': ''
                             }
                             )
-            RegistredUser = User(login.get(), password.get())
-            tk.messagebox.showinfo('Info', RegistredUser.login +' '+RegistredUser.password)
+                RegistredUser = User(login.get(), password.get())
+                tk.messagebox.showinfo('Info', RegistredUser.login +' '+RegistredUser.password)
             login.delete(0, END)
             password.delete(0, END)
             connection.commit()

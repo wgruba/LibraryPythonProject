@@ -18,5 +18,17 @@ class Book:
 
     def SaveBook(self):
         connection = sqlite3.connect('Library_dataBase.db')
-        self.connection.close()
+        coursor = connection.cursor()
+        coursor.execute("INSERT INTO books VALUES (:name,:author,:nrPages,:coverPage,:readed,:rating)",
+                        {
+                            'name': self.name,
+                            'author': self.author,
+                            'nrPages': self.nrPages,
+                            'coverPage': self.coverPage,
+                            'readed': self.readed,
+                            'rating': self.rating
+                        }
+                        )
+        connection.commit()
+        connection.close()
 
