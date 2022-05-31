@@ -1,5 +1,6 @@
 import sqlite3
 import Book
+import main as main
 
 class User:
     login = ''

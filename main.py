@@ -19,16 +19,14 @@ class SampleApp(tk.Tk):
         if self._frame is not None:
             self._frame.destroy()
         self._frame = new_frame
-        self._frame.pack()
+        self._frame.grid(row=1,column=1)
 
 class StartPage(tk.Frame):
     def __init__(self, master):
         tk.Frame.__init__(self, master)
-        tk.Label(self, text="This is the start page").pack(side="top", fill="x", pady=10)
-        tk.Button(self, text="login",
-                  command=lambda: master.switch_frame(login.Login)).pack()
-        tk.Button(self, text="register",
-                  command=lambda: master.switch_frame(register.Register)).pack()
+        label1 = tk.Label(self, text="This is the start page").grid(row=1,column=1)
+        Butt1 = tk.Button(self, text="login",command=lambda: master.switch_frame(login.Login)).grid(row=2,column=1)
+        Butt2 = tk.Button(self, text="register",command=lambda: master.switch_frame(register.Register)).grid(row=3,column=1)
 
 
 if __name__ == '__main__':
