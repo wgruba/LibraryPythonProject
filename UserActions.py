@@ -9,6 +9,7 @@ from User import User
 
 
 class UserActions(tk.Frame):
+    book = None
     User = None
     def __init__(self, master):
         frame = tk.Frame.__init__(self, master)
@@ -18,11 +19,9 @@ class UserActions(tk.Frame):
         Button(self, text="Add some books", command=self.addSomeBooks).grid(row=4,column=4)
         BookNameBut = Entry(self,width=30)
         BookNameBut.grid(row=2,column=1)
-        # Searching for chossen BookPulpit
 
         def SearchBook():
             global bookImage
-            book = None
             bookName = BookNameBut.get()
             connection = sqlite3.connect('Library_dataBase.db')
             coursor = connection.cursor()
@@ -30,19 +29,19 @@ class UserActions(tk.Frame):
             books = coursor.fetchall()
             for bookData in books:
                 if bookData[0] == bookName:
-                    book = bookData
-            if book is not None:
+                    self.book = Book(bookData[0],bookData[1],bookData[2],bookData[3],bookData[4],)
+            if self.book is not None:
                 top = tk.Toplevel()
-                bookImage = ImageTk.PhotoImage(Image.open(book[3]))
+                bookImage = ImageTk.PhotoImage(Image.open(self.book.coverPage))
                 image = Label(top,image=bookImage).grid(row=2,column=1)
-                Label(top,text=book[0]).grid(row=1,column=1)
-                Label(top,text=book[1]).grid(row=3,column=1)
-                Label(top, text="" + str(book[2])+"str.").grid(row=4,column=1)
-                Label(top, text="Readed: " + str(book[4]) + " times").grid(row=5, column=1)
-                Label(top, text="Rating: " + str(book[5]) + "/10").grid(row=6, column=1)
+                Label(top,text=self.book.name).grid(row=1,column=1)
+                Label(top,text=self.book.author).grid(row=3,column=1)
+                Label(top, text="" + str(self.book.nrPages)+"str.").grid(row=4,column=1)
+                Label(top, text="Readed: " + str(self.book.readed) + " times").grid(row=5, column=1)
+                Label(top, text="Rating: " + str(self.book.rating) + "/10").grid(row=6, column=1)
                 Button(top, text="Set as Readed", command= self.LoadUser).grid(row=7,column=1)
-                Button(top, text="Add to Your Books", command=self.LoadUser).grid(row=7, column=2)
-                Button(top, text="Rate", command=self.User).grid(row=7, column=3)
+                Button(top, text="Add to Your Books", command=self.AddToUserBooks).grid(row=7, column=2)
+                Button(top, text="Rate", command=self.rateBook).grid(row=7, column=3)
                 Button(top, text="Exit", command=top.destroy).grid(row=7, column=4)
             else:
                 tk.messagebox.showinfo('Info', 'There is no book with that title')
@@ -55,11 +54,27 @@ class UserActions(tk.Frame):
         pass
 
     def AddToUserBooks(self):
-        pass
+        if self.book.name != None and self.book.name not in self.User.ReadedBooks.keys():
+            self.User.ReadedBooks[self.book.name] = (self.book,False)
+            tk.messagebox.showinfo('Info', 'succesfully added' + self.User.ReadedBooks[self.book.name][0].name)
+            self.User.saveUser()
+        else:
+            tk.messagebox.showinfo('Info', 'cannot add to Account')
 
-    def RateBook(self):
-        pass
-
+    def rateBook(self):
+        top2 = tk.Toplevel()
+        Label(top2, text="How do you rate these book? (1-10)").grid(row=1, column=3)
+        ratingEn = Entry(top2,width=30)
+        ratingEn.grid(row=2,column=3)
+        def inside():
+            rate = int(ratingEn.get())
+            if rate > 1 and rate < 10:
+                self.book.rating += rate/10
+                self.book.SaveBook()
+            else:
+                tk.messagebox.showinfo('Info', 'wrong rating')
+        Button(top2, text="Rate", command=inside).grid(row=3, column=1)
+        Button(top2, text="Exit", command=top2.destroy).grid(row=3, column=4)
 
 
     def addSomeBooks(self):

@@ -1,6 +1,5 @@
 import sqlite3
 import Book
-import main as main
 
 class User:
     login = ''
@@ -23,20 +22,24 @@ class User:
         booksData = coursor.fetchall()
         for book in booksData:
             if book[0] == name:
-                book = Book(book[0],book[1],book[2],book[3],book[4],book[5])
-                self.AddBookToAccount(book)
+                TempBook = Book.Book(book[0],book[1],book[2],book[3],book[4],book[5])
+                self.AddBookToAccount(TempBook)
 
     def saveUser(self):
         connection = sqlite3.connect('Library_dataBase.db')
         coursor = connection.cursor()
-        coursor.execute("SELECT * FROM users WHERE login = " + self.login)
-        usersData = coursor.fetchall()
         str = ''
         for key in self.ReadedBooks.keys():
-            str += "_" + key
-        for user in usersData:
-            if user[0] == self.login:
-                user[2] = str
+            str += key + "_"
+
+        coursor.execute("""UPDATE users SET 
+                ReadedBooks = :Books
+                
+                WHERE login = :login""",
+                        {
+                            'login': self.login,
+                            'Books': str
+                        })
         connection.commit()
         connection.close()
 
@@ -45,10 +48,6 @@ class User:
             self.ReadedBooks[Book.name] = (Book,False)
         else:
             print("something is bad!!!")
-
-    def RateBook(self,Book,Rate):
-        if Book.name in self.ReadedBooks.keys():
-            Book.rating += Rate/10
 
     def SetAsReaded(self,Book):
         if Book.name in self.ReadedBooks.keys():
