@@ -1,16 +1,39 @@
-# This is a sample Python script.
+import tkinter as tk
+from PIL import ImageTk,Image
 
-# Press Shift+F10 to execute it or replace it with your code.
-# Press Double Shift to search everywhere for classes, files, tool windows, actions, and settings.
-
-
-def print_hi(name):
-    # Use a breakpoint in the code line below to debug your script.
-    print(f'Hi, {name}')  # Press Ctrl+F8 to toggle the breakpoint.
+import DataBase
+import Login as login
+import Register as register
+import DataBase as db
 
 
-# Press the green button in the gutter to run the script.
+class SampleApp(tk.Tk):
+    def __init__(self):
+        tk.Tk.__init__(self)
+        self._frame = None
+        self.switch_frame(StartPage)
+
+    def switch_frame(self, frame_class):
+        """Destroys current frame and replaces it with a new one."""
+        new_frame = frame_class(self)
+        if self._frame is not None:
+            self._frame.destroy()
+        self._frame = new_frame
+        self._frame.pack()
+
+class StartPage(tk.Frame):
+    def __init__(self, master):
+        tk.Frame.__init__(self, master)
+        tk.Label(self, text="This is the start page").pack(side="top", fill="x", pady=10)
+        tk.Button(self, text="login",
+                  command=lambda: master.switch_frame(login.Login)).pack()
+        tk.Button(self, text="register",
+                  command=lambda: master.switch_frame(register.Register)).pack()
+
+
 if __name__ == '__main__':
-    print_hi('PyCharm')
+    window = SampleApp()
+    window.mainloop()
 
-# See PyCharm help at https://www.jetbrains.com/help/pycharm/
+
+
