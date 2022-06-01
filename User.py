@@ -8,7 +8,7 @@ class User:
     def __init__(self,login,password,ReadedBooksStr = None):
         self.login = login
         self.password = password
-        if ReadedBooksStr == None:
+        if ReadedBooksStr == None or ReadedBooksStr == '':
             self.ReadedBooks = {}
         else:
             readedBooks = ReadedBooksStr.split('_')

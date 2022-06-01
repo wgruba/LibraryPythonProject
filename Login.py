@@ -23,6 +23,7 @@ class Login(tk.Frame):
         passwordBut.place(relx=0.28,rely=0.6, relwidth=0.45,relheight=0.1)
         Button(self, text="Return to start page",bg='black', fg='white' ,command=lambda: master.switch_frame(main.StartPage)).place(relx=0.60,rely=0.85,relwidth=0.15,relheight=0.1)
 
+        #function allowing to log user it to system
         def LoginUser():
             login = loginBut.get()
             password = passwordBut.get()
@@ -35,7 +36,8 @@ class Login(tk.Frame):
                 if userData[0] == login and userData[1] == password:
                     tk.messagebox.showinfo('Info', 'Login Succesfull')
                     f = open("LogedUser.txt", "w")
-                    f.write(userData[0])
+                    f.write(login)
+                    f.close()
                     success = True
             connection.commit()
             connection.close()
@@ -46,7 +48,6 @@ class Login(tk.Frame):
                 tk.messagebox.showinfo('Info', 'Login or Password is bad!! Try Again')
                 loginBut.delete(0,END)
                 passwordBut.delete(0, END)
-
         Button(self, text="Login",bg='black', fg='white' ,command=LoginUser).place(relx=0.15, rely=0.85, relwidth=0.15, relheight=0.1)
 
 
