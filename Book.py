@@ -33,5 +33,17 @@ class Book:
         connection.close()
 
     def UpdateBook(self):
-        pass
+        connection = sqlite3.connect('Library_dataBase.db')
+        coursor = connection.cursor()
+        coursor.execute("""UPDATE books SET 
+                     readed = :Readed,
+                     rating = :Rating
+                     WHERE name = :Name""",
+                        {
+                            'Name': self.name,
+                            'Readed': self.readed,
+                            'Rating': self.rating
+                        })
+        connection.commit()
+        connection.close()
 

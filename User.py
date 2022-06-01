@@ -25,7 +25,7 @@ class User:
                 TempBook = Book.Book(book[0],book[1],book[2],book[3],book[4],book[5])
                 self.AddBookToAccount(TempBook)
 
-    def saveUser(self):
+    def updateUser(self):
         connection = sqlite3.connect('Library_dataBase.db')
         coursor = connection.cursor()
         str = ''
@@ -34,7 +34,6 @@ class User:
 
         coursor.execute("""UPDATE users SET 
                 ReadedBooks = :Books
-                
                 WHERE login = :login""",
                         {
                             'login': self.login,
@@ -51,6 +50,7 @@ class User:
 
     def SetAsReaded(self,Book):
         if Book.name in self.ReadedBooks.keys():
-            Book.readed += 1
-            self.ReadedBooks[Book.name] = (Book,True)
+            if not self.ReadedBooks[Book.name][1]:
+                Book.readed += 1
+                self.ReadedBooks[Book.name] = (Book,True)
 

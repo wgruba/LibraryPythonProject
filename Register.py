@@ -22,7 +22,7 @@ class Register(tk.Frame):
         login.place(relx=0.28,rely=0.5, relwidth=0.45,relheight=0.1)
         password = Entry(self,width=30,show='*')
         password.place(relx=0.28,rely=0.6, relwidth=0.45,relheight=0.1)
-        ReturnButt = Button(self, text="Return to start page",command=lambda: master.switch_frame(main.StartPage)).place(relx=0.60,rely=0.85, relwidth=0.15,relheight=0.1)
+        Button(self, text="Return to start page", command=lambda: master.switch_frame(main.StartPage)).place(relx=0.60,rely=0.85, relwidth=0.15, relheight=0.1)
 
         def RegisterUser(event = None):
             event = event

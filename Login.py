@@ -21,7 +21,7 @@ class Login(tk.Frame):
         loginBut.place(relx=0.28,rely=0.5, relwidth=0.45,relheight=0.1)
         passwordBut = Entry(self, width=30,show='*')
         passwordBut.place(relx=0.28,rely=0.6, relwidth=0.45,relheight=0.1)
-        ReturnButt = Button(self, text="Return to start page",command=lambda: master.switch_frame(main.StartPage)).place(relx=0.60,rely=0.85, relwidth=0.15,relheight=0.1)
+        Button(self, text="Return to start page",bg='black', fg='white' ,command=lambda: master.switch_frame(main.StartPage)).place(relx=0.60,rely=0.85,relwidth=0.15,relheight=0.1)
 
         def LoginUser():
             login = loginBut.get()
@@ -47,7 +47,7 @@ class Login(tk.Frame):
                 loginBut.delete(0,END)
                 passwordBut.delete(0, END)
 
-        RegButt = Button(self, text="Login", command=LoginUser).place(relx=0.15,rely=0.85, relwidth=0.15,relheight=0.1)
+        Button(self, text="Login",bg='black', fg='white' ,command=LoginUser).place(relx=0.15, rely=0.85, relwidth=0.15, relheight=0.1)
 
 
 
