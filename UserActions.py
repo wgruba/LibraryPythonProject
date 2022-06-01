@@ -1,4 +1,4 @@
-from tkinter.ttk import Label, Entry, Checkbutton, Button
+
 import sqlite3
 import tkinter as tk
 from tkinter import *
@@ -12,13 +12,18 @@ class UserActions(tk.Frame):
     book = None
     User = None
     def __init__(self, master):
+        global background_image
         frame = tk.Frame.__init__(self, master)
-        Label(self, text="User GUI").grid(row=1, column=1)
-        Button(self, text="LoadData", command= self.LoadUser).grid(row= 4,column=1)
-        Button(self, text="Return to start page",command=lambda: master.switch_frame(main.StartPage)).grid(row=4, column=3)
-        Button(self, text="Add some books", command=self.addSomeBooks).grid(row=4,column=4)
-        BookNameBut = Entry(self,width=30)
-        BookNameBut.grid(row=2,column=1)
+        background_image = ImageTk.PhotoImage(Image.open('pictures/lib.jpg').resize((1600, 800), Image.Resampling.LANCZOS))
+        Canvas1 = tk.Canvas(frame)
+        Canvas1.create_image(300, 340, image=background_image)
+        Canvas1.config(bg="white", width=700, height=800)
+        Canvas1.pack(expand=True, fill='both')
+        Button(frame, text="LoadData", command=self.LoadUser).place(relx=0.28,rely=0.7, relwidth=0.45,relheight=0.1)
+        Button(frame, text="Return to start page", command=lambda: master.switch_frame(main.StartPage)).place(relx=0.28,rely=0.8, relwidth=0.45,relheight=0.1)
+        Button(frame, text="Add some books", command=self.addSomeBooks).place(relx=0.28,rely=0.5, relwidth=0.45,relheight=0.1)
+        BookNameBut = Entry(frame, width=30)
+        BookNameBut.place(relx=0.25,rely=0.05, relwidth=0.50,relheight=0.05)
 
         def SearchBook():
             global bookImage
@@ -47,8 +52,7 @@ class UserActions(tk.Frame):
                 tk.messagebox.showinfo('Info', 'There is no book with that title')
             connection.commit()
             connection.close()
-
-        Button(self, text="BookSearching", command=SearchBook).grid(row=3, column=2)
+        Button(frame, text="Search", command=SearchBook).place(relx=0.60,rely=0.1, relwidth=0.15,relheight=0.03)
 
     def SetAsReaded(self):
         pass

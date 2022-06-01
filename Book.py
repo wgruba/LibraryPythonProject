@@ -32,3 +32,6 @@ class Book:
         connection.commit()
         connection.close()
 
+    def UpdateBook(self):
+        pass
+

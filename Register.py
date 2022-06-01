@@ -1,22 +1,28 @@
 import sqlite3
 import tkinter as tk
-import tkinter.messagebox
-from tkinter import END
+from tkinter import *
+from PIL import ImageTk,Image
 import main as main
 from User import User
-from tkinter.ttk import Label, Entry, Checkbutton, Button
+import tkinter.messagebox
 
 class Register(tk.Frame):
     def __init__(self, master):
+        global background_image
         frame = tk.Frame.__init__(self, master)
-        Label(self, text="Registration").grid(row=1,column=1)
-        Label(self,text="login").grid(row=2,column=1)
-        Label(self, text="password").grid(row=3,column=1)
+        background_image = ImageTk.PhotoImage(Image.open('pictures/reg3.png ').resize((1600, 900), Image.Resampling.LANCZOS))
+        Canvas1 = tk.Canvas(self)
+        Canvas1.create_image(300, 340, image=background_image)
+        Canvas1.config(bg="white", width=700, height=800)
+        Canvas1.pack(expand=True, fill='both')
+        Label(self, text="Registration")
+        Label(self,text="login").place(relx=0.15, rely=0.5, relwidth=0.15, relheight=0.1)
+        Label(self, text="password").place(relx=0.15, rely=0.6, relwidth=0.15, relheight=0.1)
         login = Entry(self,width=30)
-        login.grid(row=2,column=2)
-        password = Entry(self,width=30)
-        password.grid(row=3,column=2)
-        ReturnButt = Button(self, text="Return to start page",command=lambda: master.switch_frame(main.StartPage)).grid(row=4,column=2)
+        login.place(relx=0.28,rely=0.5, relwidth=0.45,relheight=0.1)
+        password = Entry(self,width=30,show='*')
+        password.place(relx=0.28,rely=0.6, relwidth=0.45,relheight=0.1)
+        ReturnButt = Button(self, text="Return to start page",command=lambda: master.switch_frame(main.StartPage)).place(relx=0.60,rely=0.85, relwidth=0.15,relheight=0.1)
 
         def RegisterUser(event = None):
             event = event
@@ -45,4 +51,4 @@ class Register(tk.Frame):
             connection.commit()
             connection.close()
 
-        RegButt = Button(self, text= "Register", command=RegisterUser).grid(row=4, column=1)
+        RegButt = Button(self, text= "Register", command=RegisterUser).place(relx=0.15,rely=0.85, relwidth=0.15,relheight=0.1)

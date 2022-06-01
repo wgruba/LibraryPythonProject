@@ -1,9 +1,10 @@
-import tkinter as tk
-from PIL import ImageTk,Image
 
-import DataBase
 import Login as login
 import Register as register
+import tkinter as tk
+from tkinter import *
+from PIL import ImageTk,Image
+
 
 
 
@@ -16,17 +17,30 @@ class SampleApp(tk.Tk):
     def switch_frame(self, frame_class):
         """Destroys current frame and replaces it with a new one."""
         new_frame = frame_class(self)
+        self.title('Library App')
+        self.geometry("1000x600")
         if self._frame is not None:
             self._frame.destroy()
         self._frame = new_frame
-        self._frame.grid(row=1,column=1)
+        self._frame.place(relx=0,rely=0, relwidth=1, relheight=1)
 
 class StartPage(tk.Frame):
     def __init__(self, master):
-        tk.Frame.__init__(self, master)
-        label1 = tk.Label(self, text="This is the start page").grid(row=1,column=1)
-        Butt1 = tk.Button(self, text="login",command=lambda: master.switch_frame(login.Login)).grid(row=2,column=1)
-        Butt2 = tk.Button(self, text="register",command=lambda: master.switch_frame(register.Register)).grid(row=3,column=1)
+        global background_image
+        same = True
+        n = 0.25
+        frame = tk.Frame.__init__(self, master)
+        background_image = ImageTk.PhotoImage(Image.open('pictures/lib.jpg').resize((1600,800),Image.Resampling.LANCZOS))
+        Canvas1 = Canvas(self)
+        Canvas1.create_image(300, 340, image=background_image)
+        Canvas1.config(bg="white", width=700, height=800)
+        Canvas1.pack(expand=True, fill='both')
+        headingFrame1 = Frame(self, bg="#FFBB00", bd=5)
+        headingFrame1.place(relx=0.2, rely=0.1, relwidth=0.6, relheight=0.16)
+        headingLabel = Label(headingFrame1, text="Welcome to my Application", bg='black', fg='white',font=('Courier', 15))
+        headingLabel.place(relx=0, rely=0, relwidth=1, relheight=1)
+        tk.Button(self, text="login", bg='black', fg='white', command=lambda: master.switch_frame(login.Login)).place(relx=0.28, rely=0.4, relwidth=0.45, relheight=0.1)
+        tk.Button(self, text="register", bg='black', fg='white',command=lambda: master.switch_frame(register.Register)).place(relx=0.28, rely=0.5, relwidth=0.45,relheight=0.1)
 
 
 if __name__ == '__main__':
