@@ -1,3 +1,6 @@
+import os
+import sqlite3
+import sys
 
 import Login as login
 import Register as register
@@ -16,6 +19,12 @@ class SampleApp(tk.Tk):
         """Destroys current frame and replaces it with a new one."""
         new_frame = frame_class(self)
         self.title('Library App')
+        path = os.path.join(os.path.dirname(__file__), "images/")
+        if sys.platform.startswith("win"):
+            icon = path + "icon.ico"
+        else:
+            icon = "@" + path + "interest.xbm"
+        self.iconbitmap(icon)
         self.geometry("1000x600")
         if self._frame is not None:
             self._frame.destroy()

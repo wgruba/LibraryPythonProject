@@ -4,6 +4,8 @@ import sqlite3
 import tkinter
 import tkinter as tk
 from tkinter import *
+from tkinter import filedialog
+
 from PIL import ImageTk,Image
 import main as main
 from Book import Book
@@ -22,17 +24,17 @@ class UserActions(tk.Frame):
         self.WorkPlace()
         self.CreateBaseMenu()
         self.CreateToolBar()
-        self.dodaj_menu_help()
+        self.AddHelpMenu()
 
 
     def CreateToolBar(self):
         self.toolbar_images = []
         self.toolbar = tk.Frame(self.parent)
         for image, command,i in (
-                ("images/editdelete.gif", print('hello'),0),
-                ("images/filenew.gif", print('hello'),0.05),
-                ("images/fileopen.gif", print('hello'),0.1),
-                ("images/filesave.gif", print('hello'),0.15)):
+                ("images/editdelete.gif", self.parent.destroy,0),
+                ("images/editadd.gif", self.addSomeBooks,0.05),
+                ("images/human.png", self.printUserData,0.1),
+                ("images/book.png", self.Mybooks,0.15)):
             image = os.path.join(os.path.dirname(__file__), image)
             try:
                 image = tkinter.PhotoImage(file=image)
@@ -47,6 +49,9 @@ class UserActions(tk.Frame):
         self.statusbar = Label(self.parent, text="on the way…", bd=1, relief=tk.SUNKEN, anchor=tk.W)
         #self.statusbar.after(5000, self.clearStatusBar)
         self.statusbar.pack(side=tk.BOTTOM, fill=tk.X)
+
+    def printUserData(self):
+        tk.messagebox.showinfo('Info', f'User \n Login: {self.User.login} \n password: {self.User.password}')
 
     def CreateBaseMenu(self):
         self.menubar = tk.Menu(self.parent)
@@ -66,30 +71,35 @@ class UserActions(tk.Frame):
                 self.parent.bind(shortcut, command)
         self.menubar.add_cascade(label="File", menu=fileMenu, underline=0)
 
-    def Mybooks(self):
+    def Mybooks(self,event = None):
         str = ''
         for book in self.User.ReadedBooks:
             str += '\n' + book
         tk.messagebox.showinfo('Info', 'Yours books: ' + str)
 
     # function deleting user data from database
-    def deleteAccount(self):
-        #I have to add confirmation
-       # try:
-        connection = sqlite3.connect('Library_dataBase.db')
-        coursor = connection.cursor()
-        coursor.execute("SELECT * from users")
-        print(coursor.fetchall())
-        coursor.execute(f'DELETE from users WHERE login = "{self.User.login}"')
-        connection.commit()
-        connection.close()
-        tk.messagebox.showinfo('Info', 'Account removed succesfully')
-        self.parent.switch_frame(main.StartPage)
-        #except:
-
-            #tk.messagebox.showinfo('Info', 'Something went wrong')
-
-    def logout(self):
+    def deleteAccount(self,event= None):
+        reply = tkinter.messagebox.askyesnocancel(
+            "Deleting account"
+            ,
+            "Do you want to delete your account?",
+            parent=self.parent)
+        if reply is None:
+            return False
+        if reply:
+            try:
+                connection = sqlite3.connect('Library_dataBase.db')
+                coursor = connection.cursor()
+                coursor.execute("SELECT * from users")
+                coursor.execute(f'DELETE from users WHERE login = "{self.User.login}"')
+                connection.commit()
+                connection.close()
+                tk.messagebox.showinfo('Info', 'Account removed succesfully')
+                self.parent.switch_frame(main.StartPage)
+            except:
+                tk.messagebox.showinfo('Info', 'Something went wrong')
+        return True
+    def logout(self,event= None):
         self.parent.switch_frame(main.StartPage)
 
     #function creating interactive user view
@@ -119,9 +129,8 @@ class UserActions(tk.Frame):
             Label( self.frame, image=bookImage1, bg='black', fg='white', font=('Courier', 15)).place(relx=0.05, rely=0.25,relwidth=0.25,relheight=0.30)
             Label( self.frame, text=book1[ran][0].name, bg='black', fg='white', font=('Courier', 15)).place(relx=0.05,rely=0.55,relwidth=0.25, relheight=0.05)
             ran = random.randrange(0, len(book1))
-            bookImage2 = ImageTk.PhotoImage(
-                Image.open(book1[ran][0].coverPage).resize((200, 180), Image.Resampling.LANCZOS))
-            Label( self.frame, image=bookImage2, bg='black', fg='white', font=('Courier', 15)).place(relx=0.37, rely=0.25,relwidth=0.25,relheight=0.30)
+            bookImage2 = ImageTk.PhotoImage(Image.open(book1[ran][0].coverPage).resize((200, 180), Image.Resampling.LANCZOS))
+            Label(self.frame, image=bookImage2, bg='black', fg='white', font=('Courier', 15)).place(relx=0.37, rely=0.25,relwidth=0.25,relheight=0.30)
             Label( self.frame, text=book1[ran][0].name, bg='black', fg='white', font=('Courier', 15)).place(relx=0.37, rely=0.55,relwidth=0.25,relheight=0.05)
             ran = random.randrange(0, len(book1))
             bookImage3 = ImageTk.PhotoImage(
@@ -172,21 +181,32 @@ class UserActions(tk.Frame):
     def clearStatusBar(self):
         self.statusbar["text"] = ""
 
-    def dodaj_menu_help(self):
+    def AddHelpMenu(self):
         fileMenu = tk.Menu(self.menubar)
         for label, command, shortcut_text, shortcut in (
-                ("New...", print('joł'), "Ctrl+N", "<Control-n>"),
-                ("Load...", print('joł'), "Ctrl+L", "<Control-l>"),
-                ("Save", print('joł'), "Ctrl+S", "<Control-s>"),
+                ('Info', self.InfoHelp, "Ctrl+I", "<Control-i>"),
+                ("Delete Account?", self.DeleteAccountHelp, "Ctrl+D", "<Control-d>"),
+                ("Searching books?", self.SearchingBooks, "Ctrl+W", "<Control-w>"),
                 (None, None, None, None),
-                ("Quit", print('joł'), "Ctrl+H", "<Control-h>")):
+                ("Quit", self.Quithelp, "Ctrl+H", "<Control-h>")):
             if label is None:
                 fileMenu.add_separator()
             else:
-                fileMenu.add_command(label=label, underline=0,
-                                     command=command, accelerator=shortcut_text)
+                fileMenu.add_command(label=label, underline=0,command=command, accelerator=shortcut_text)
                 self.parent.bind(shortcut, command)
         self.menubar.add_cascade(label="Help", menu=fileMenu, underline=0)
+
+    def InfoHelp(self,event = None):
+        tk.messagebox.showinfo('Info', 'Hello in our app \n You can search book and read them \n also you can add book to your readed list \n and add your book to our data base')
+
+    def DeleteAccountHelp(self,event= None):
+        tk.messagebox.showinfo('Info', 'You can delete all yours data from our app')
+
+    def SearchingBooks(self,event= None):
+        tk.messagebox.showinfo('Info', 'You can search books from our data base')
+
+    def Quithelp(self,event= None):
+        tk.messagebox.showinfo('Info', 'You are getting out of app')
 
     #function marking book as readed
     def SetAsReaded(self):
@@ -235,26 +255,61 @@ class UserActions(tk.Frame):
 
     #non use fuction adding some books to data base
     def addSomeBooks(self):
-        book1 = Book('Cień i kość','Leigh Bardugo',288,'pictures/cień_i_kość.jpg')
-        book2 = Book('Krew i miód', 'Shelby Mahurin', 512, 'pictures/krew_i_miód.png')
-        book3 = Book('Mentalista', 'Henrik Fexeus', 680, 'pictures/mentalista.png')
-        book4 = Book('Pan Tadeusz', 'Adam Mickiewicz', 344, 'pictures/pan_tadeusz.png')
-
-        connection = sqlite3.connect('Library_dataBase.db')
-        coursor = connection.cursor()
-        coursor.execute("SELECT * FROM books")
-        adds = coursor.fetchall()
-        UserExists = False
-        for userData in adds:
-            if userData[0] == book1.name:
-                UserExists = True
-        if UserExists:
-            tk.messagebox.showinfo('Info', 'These books exist!! Try Again')
-        else:
-            book1.SaveBook()
-            book2.SaveBook()
-            book3.SaveBook()
-            book4.SaveBook()
+        global background_image
+        self.ustawStatusBar("waiting for data...")
+        my_filetypes = [('all files', '.*'), ('text files', '.txt')]
+        top3 = tk.Toplevel()
+        top3.geometry("1000x600")
+        background_image = ImageTk.PhotoImage(Image.open('pictures/background.jpg').resize((1400, 1000), Image.Resampling.LANCZOS))
+        Canvas1 = tk.Canvas(top3)
+        Canvas1.create_image(300, 340, image=background_image)
+        Canvas1.config(bg="white", width=700, height=800)
+        Canvas1.pack(expand=True, fill='both')
+        self.path = ''
+        book1 = None
+        def getPath():
+            answer = filedialog.askopenfilename(parent=top3,initialdir=os.getcwd(),title="Please select a Image:",filetypes=my_filetypes)
+            self.path = answer
+            print('jołjoł')
+        Label(top3,text='What book you want to add? ').place(relx=0.02, rely=0.1, relwidth=0.22, relheight=0.05)
+        Label(top3, text='Enter Name of book ').place(relx=0.10, rely=0.25, relwidth=0.22, relheight=0.1)
+        Label(top3, text='Enter Author of book ').place(relx=0.10, rely=0.35, relwidth=0.22, relheight=0.1)
+        Label(top3, text='Enter number of pages of book ').place(relx=0.10, rely=0.45, relwidth=0.22, relheight=0.1)
+        nameEn = Entry(top3,width=30)
+        autrorEn = Entry(top3,width=30)
+        numofpagesEn = Entry(top3,width=10)
+        nameEn.place(relx=0.32, rely=0.25, relwidth=0.50, relheight=0.1)
+        autrorEn.place(relx=0.32, rely=0.35, relwidth=0.50, relheight=0.1)
+        numofpagesEn.place(relx=0.32, rely=0.45, relwidth=0.50, relheight=0.1)
+        def createBook():
+            name = nameEn.get()
+            autror = autrorEn.get()
+            numofpages = numofpagesEn.get()
+            connection = sqlite3.connect('Library_dataBase.db')
+            coursor = connection.cursor()
+            coursor.execute("SELECT * FROM books")
+            books = coursor.fetchall()
+            BookExists = False
+            for booksData in books:
+                if booksData[0] == name:
+                    BookExists = True
+            if BookExists:
+                tk.messagebox.showinfo('Info', 'These books exist!! Try Again')
+            else:
+                if name != '' and autror != '' and numofpages != '' and name != ' ' and autror != ' ' and numofpages != ' ' and self.correctionOftext(name) and self.correctionOftext(autror) and self.correctionOftext(numofpages):
+                    try:
+                        book1 = Book(name, autror, int(numofpages), self.path)
+                        tk.messagebox.showinfo('Info', 'Added sucesfully')
+                        book1.SaveBook()
+                        self.path = ''
+                        top3.destroy()
+                    except:
+                        tk.messagebox.showinfo('Info', 'Wrong input')
+                else:
+                    tk.messagebox.showinfo('Info', 'Wrong input')
+        Button(top3, text="Add Book Image", command=getPath).place(relx=0.7, rely=0.60, relwidth=0.1, relheight=0.1)
+        Button(top3, text="Back", command=top3.destroy).place(relx=0.45, rely=0.60, relwidth=0.15, relheight=0.1)
+        Button(top3, text="Add Book", command=createBook).place(relx=0.3, rely=0.60, relwidth=0.1, relheight=0.1)
 
     # load user from data base
     def LoadUser(self):
@@ -272,3 +327,13 @@ class UserActions(tk.Frame):
         connection.commit()
         connection.close()
 
+    def correctionOftext(self, txt):
+        if txt.isprintable():
+            for i in txt:
+                if i == '_' and i == '%' and i =='#' and i == '@' and i == '^' and i == '~' and i == '*':
+                    tk.messagebox.showinfo('Info', 'Wrong input')
+                    return False
+            return True
+        else:
+            tk.messagebox.showinfo('Info', 'Wrong input')
+            return False
