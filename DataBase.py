@@ -7,6 +7,7 @@ class DataBase():
         self.coursor.execute("""CREATE TABLE users (
                             login text,
                             password text
+                            ReadedBooks text
                                 )""")
         self.coursor.execute("""CREATE TABLE books (
                                     name text,

@@ -5,13 +5,42 @@ class User:
     login = ''
     password = ''
     ReadedBooks = {}
-    def __init__(self,login,password):
+    def __init__(self,login,password,ReadedBooksStr = None):
         self.login = login
         self.password = password
+        if ReadedBooksStr == None or ReadedBooksStr == '':
+            self.ReadedBooks = {}
+        else:
+            readedBooks = ReadedBooksStr.split('_')
+            for book in readedBooks:
+                self.loadBooks(book)
 
-    def saveUser(self):
+    def loadBooks(self,name):
         connection = sqlite3.connect('Library_dataBase.db')
-        self.connection.close()
+        coursor = connection.cursor()
+        coursor.execute("SELECT * FROM books")
+        booksData = coursor.fetchall()
+        for book in booksData:
+            if book[0] == name:
+                TempBook = Book.Book(book[0],book[1],book[2],book[3],book[4],book[5])
+                self.AddBookToAccount(TempBook)
+
+    def updateUser(self):
+        connection = sqlite3.connect('Library_dataBase.db')
+        coursor = connection.cursor()
+        str = ''
+        for key in self.ReadedBooks.keys():
+            str += key + "_"
+
+        coursor.execute("""UPDATE users SET 
+                ReadedBooks = :Books
+                WHERE login = :login""",
+                        {
+                            'login': self.login,
+                            'Books': str
+                        })
+        connection.commit()
+        connection.close()
 
     def AddBookToAccount(self,Book):
         if Book.name != None and Book.name not in self.ReadedBooks.keys():
@@ -19,12 +48,9 @@ class User:
         else:
             print("something is bad!!!")
 
-    def RateBook(self,Book,Rate):
-        if Book.name in self.ReadedBooks.keys():
-            Book.rating += Rate/10
-
     def SetAsReaded(self,Book):
         if Book.name in self.ReadedBooks.keys():
-            Book.readed += 1
-            self.ReadedBooks[Book.name] = (Book,True)
+            if not self.ReadedBooks[Book.name][1]:
+                Book.readed += 1
+                self.ReadedBooks[Book.name] = (Book,True)
 
