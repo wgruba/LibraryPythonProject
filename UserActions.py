@@ -22,6 +22,7 @@ class UserActions(tk.Frame):
         self.WorkPlace()
         self.CreateBaseMenu()
         self.CreateToolBar()
+        self.dodaj_menu_help()
 
 
     def CreateToolBar(self):
@@ -52,11 +53,11 @@ class UserActions(tk.Frame):
         self.parent["menu"] = self.menubar
         fileMenu = tk.Menu(self.menubar)
         for label, command, shortcut_text, shortcut in (
-                ("New...", print('New'), "Ctrl+N", "<Control-n>"),
-                ("Load...", print('load'), "Ctrl+L", "<Control-l>"),
-                ("Save", print('save'), "Ctrl+S", "<Control-s>"),
+                ("My books ", self.Mybooks, "Ctrl+N", "<Control-n>"),
+                ("Delete account", self.deleteAccount, "Ctrl+L", "<Control-l>"),
+                ("Logout", self.logout, "Ctrl+S", "<Control-s>"),
                 (None, None, None, None),
-                ("Quit", print('quit'), "Ctrl+Q", "<Control-q>")):
+                ("Quit", self.parent.destroy, "Ctrl+Q", "<Control-q>")):
             if label is None:
                 fileMenu.add_separator()
             else:
@@ -65,7 +66,33 @@ class UserActions(tk.Frame):
                 self.parent.bind(shortcut, command)
         self.menubar.add_cascade(label="File", menu=fileMenu, underline=0)
 
+    def Mybooks(self):
+        str = ''
+        for book in self.User.ReadedBooks:
+            str += '\n' + book
+        tk.messagebox.showinfo('Info', 'Yours books: ' + str)
 
+    # function deleting user data from database
+    def deleteAccount(self):
+        #I have to add confirmation
+       # try:
+        connection = sqlite3.connect('Library_dataBase.db')
+        coursor = connection.cursor()
+        coursor.execute("SELECT * from users")
+        print(coursor.fetchall())
+        coursor.execute(f'DELETE from users WHERE login = "{self.User.login}"')
+        connection.commit()
+        connection.close()
+        tk.messagebox.showinfo('Info', 'Account removed succesfully')
+        self.parent.switch_frame(main.StartPage)
+        #except:
+
+            #tk.messagebox.showinfo('Info', 'Something went wrong')
+
+    def logout(self):
+        self.parent.switch_frame(main.StartPage)
+
+    #function creating interactive user view
     def WorkPlace(self):
         global background_image, bookImage1, bookImage2, bookImage3
         self.frame = tk.Frame(self.parent)
@@ -102,8 +129,7 @@ class UserActions(tk.Frame):
             Label( self.frame, image=bookImage3, bg='black', fg='white', font=('Courier', 15)).place(relx=0.7, rely=0.25,relwidth=0.25,relheight=0.30)
             Label( self.frame, text=book1[ran][0].name, bg='black', fg='white', font=('Courier', 15)).place(relx=0.7, rely=0.55,relwidth=0.25, relheight=0.05)
         else:
-            Label( self.frame, text="Ooops you dont have any book", bg='black', fg='white', font=('Courier', 15)).place(
-                relx=0.30, rely=0.25, relwidth=0.50, relheight=0.1)
+            Label( self.frame, text="Ooops you dont have any book", bg='black', fg='white', font=('Courier', 15)).place( relx=0.30, rely=0.25, relwidth=0.50, relheight=0.1)
         self.ustawStatusBar("waiting...")
         # inner funkction showing new widow and allowing to look at the book and do some stuff with it
         def SearchBook():
@@ -149,11 +175,11 @@ class UserActions(tk.Frame):
     def dodaj_menu_help(self):
         fileMenu = tk.Menu(self.menubar)
         for label, command, shortcut_text, shortcut in (
-                ("New...", self.file_new_help, "Ctrl+N", "<Control-n>"),
-                ("Load...", self.file_load_help, "Ctrl+L", "<Control-l>"),
-                ("Save", self.file_save_help, "Ctrl+S", "<Control-s>"),
+                ("New...", print('joł'), "Ctrl+N", "<Control-n>"),
+                ("Load...", print('joł'), "Ctrl+L", "<Control-l>"),
+                ("Save", print('joł'), "Ctrl+S", "<Control-s>"),
                 (None, None, None, None),
-                ("Quit", self.file_quit_help, "Ctrl+H", "<Control-h>")):
+                ("Quit", print('joł'), "Ctrl+H", "<Control-h>")):
             if label is None:
                 fileMenu.add_separator()
             else:
