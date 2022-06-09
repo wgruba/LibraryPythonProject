@@ -10,7 +10,7 @@ class Login(tk.Frame):
     def __init__(self, master):
         tk.Frame.__init__(self, master)
         global background_image
-        background_image = ImageTk.PhotoImage(Image.open('pictures/lib.jpg').resize((1600, 800), Image.Resampling.LANCZOS))
+        background_image = ImageTk.PhotoImage(Image.open('pictures/lib.jpg').resize((3200,1100), Image.Resampling.LANCZOS))
         Canvas1 = tk.Canvas(self)
         Canvas1.create_image(300, 340, image=background_image)
         Canvas1.config(bg="white", width=700, height=800)

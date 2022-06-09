@@ -16,6 +16,7 @@ class Book:
         self.readed = readed
         self.rating = rating
 
+    #saving book in database
     def SaveBook(self):
         connection = sqlite3.connect('Library_dataBase.db')
         coursor = connection.cursor()
@@ -32,6 +33,7 @@ class Book:
         connection.commit()
         connection.close()
 
+    #updating book data in database
     def UpdateBook(self):
         connection = sqlite3.connect('Library_dataBase.db')
         coursor = connection.cursor()

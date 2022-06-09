@@ -15,6 +15,7 @@ class User:
             for book in readedBooks:
                 self.loadBooks(book)
 
+    #loading books from data base to user
     def loadBooks(self,name):
         connection = sqlite3.connect('Library_dataBase.db')
         coursor = connection.cursor()
@@ -25,6 +26,7 @@ class User:
                 TempBook = Book.Book(book[0],book[1],book[2],book[3],book[4],book[5])
                 self.AddBookToAccount(TempBook)
 
+    #updating User data in database
     def updateUser(self):
         connection = sqlite3.connect('Library_dataBase.db')
         coursor = connection.cursor()
@@ -42,12 +44,14 @@ class User:
         connection.commit()
         connection.close()
 
+    #adding a new book to user account
     def AddBookToAccount(self,Book):
         if Book.name != None and Book.name not in self.ReadedBooks.keys():
             self.ReadedBooks[Book.name] = (Book,False)
         else:
-            print("something is bad!!!")
+            print('yes')
 
+    #setting book as readed in user account
     def SetAsReaded(self,Book):
         if Book.name in self.ReadedBooks.keys():
             if not self.ReadedBooks[Book.name][1]:
