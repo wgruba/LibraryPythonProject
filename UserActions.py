@@ -5,7 +5,6 @@ import tkinter
 import tkinter as tk
 from tkinter import *
 from tkinter import filedialog
-
 from PIL import ImageTk,Image
 import main as main
 from Book import Book
@@ -71,6 +70,8 @@ class UserActions(tk.Frame):
                 self.parent.bind(shortcut, command)
         self.menubar.add_cascade(label="File", menu=fileMenu, underline=0)
 
+
+    #function showing user books
     def Mybooks(self,event = None):
         str = ''
         for book in self.User.ReadedBooks:
@@ -255,7 +256,6 @@ class UserActions(tk.Frame):
                 tk.messagebox.showinfo('Info', 'Wrong Value!! Try again')
         Button(top2, text="Rate", command=inside).grid(row=3, column=1)
         Button(top2, text="Exit", command=top2.destroy).grid(row=3, column=4)
-        self.ustawStatusBar("Adding user rating")
 
     #non use fuction adding book by user to data base
     def addSomeBooks(self):
@@ -288,6 +288,7 @@ class UserActions(tk.Frame):
         nameEn.place(relx=0.32, rely=0.25, relwidth=0.50, relheight=0.1)
         autrorEn.place(relx=0.32, rely=0.35, relwidth=0.50, relheight=0.1)
         numofpagesEn.place(relx=0.32, rely=0.45, relwidth=0.50, relheight=0.1)
+
         #inner function adding books to data base
         def createBook():
             self.setStatusBar("creating book... ")
