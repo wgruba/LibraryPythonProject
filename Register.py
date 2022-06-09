@@ -10,7 +10,7 @@ class Register(tk.Frame):
     def __init__(self, master):
         global background_image
         frame = tk.Frame.__init__(self, master)
-        background_image = ImageTk.PhotoImage(Image.open('pictures/reg3.png ').resize((1600, 900), Image.Resampling.LANCZOS))
+        background_image = ImageTk.PhotoImage(Image.open('pictures/reg3.png ').resize((3200,1100), Image.Resampling.LANCZOS))
         Canvas1 = tk.Canvas(self)
         Canvas1.create_image(300, 340, image=background_image)
         Canvas1.config(bg="white", width=700, height=800)
@@ -52,9 +52,10 @@ class Register(tk.Frame):
                                 }
                                 )
                     RegistredUser = User(login.get(), password.get())
-                    tk.messagebox.showinfo('Info', RegistredUser.login +' '+RegistredUser.password)
+                    tk.messagebox.showinfo('Info', 'Registration completed')
                 login.delete(0, END)
                 password.delete(0, END)
+                password_confirmation.delete(0, END)
                 connection.commit()
                 connection.close()
             else:

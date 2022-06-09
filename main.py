@@ -1,7 +1,5 @@
 import os
-import sqlite3
 import sys
-
 import Login as login
 import Register as register
 import tkinter as tk
@@ -37,7 +35,7 @@ class StartPage(tk.Frame):
         global background_image
         frame = tk.Frame.__init__(self, master)
         #adding background
-        background_image = ImageTk.PhotoImage(Image.open('pictures/lib.jpg').resize((1600,800),Image.Resampling.LANCZOS))
+        background_image = ImageTk.PhotoImage(Image.open('pictures/lib.jpg').resize((3200,1100),Image.Resampling.LANCZOS))
         Canvas1 = Canvas(self)
         Canvas1.create_image(300, 340, image=background_image)
         Canvas1.config(bg="white", width=700, height=800)
@@ -51,7 +49,6 @@ class StartPage(tk.Frame):
         tk.Button(self, text="register", bg='black', fg='white',command=lambda: master.switch_frame(register.Register)).place(relx=0.28, rely=0.5, relwidth=0.45,relheight=0.1)
 
 
-#RUN!!!!!!!!!!!!!!
 if __name__ == '__main__':
     window = SampleApp()
     window.mainloop()

@@ -99,6 +99,7 @@ class UserActions(tk.Frame):
             except:
                 tk.messagebox.showinfo('Info', 'Something went wrong')
         return True
+
     def logout(self,event= None):
         self.parent.switch_frame(main.StartPage)
 
@@ -108,7 +109,7 @@ class UserActions(tk.Frame):
         self.frame = tk.Frame(self.parent)
         self.frame.place(relx=0, rely=0.03, relwidth=1, relheight=0.94)
         # adding background image
-        background_image = ImageTk.PhotoImage(Image.open('pictures/lib.jpg').resize((1600, 800), Image.Resampling.LANCZOS))
+        background_image = ImageTk.PhotoImage(Image.open('pictures/lib.jpg').resize((3200,1100), Image.Resampling.LANCZOS))
         Canvas1 = tk.Canvas(self.frame)
         Canvas1.create_image(300, 340, image=background_image)
         Canvas1.config(bg="white", width=700, height=800)
@@ -139,11 +140,11 @@ class UserActions(tk.Frame):
             Label( self.frame, text=book1[ran][0].name, bg='black', fg='white', font=('Courier', 15)).place(relx=0.7, rely=0.55,relwidth=0.25, relheight=0.05)
         else:
             Label( self.frame, text="Ooops you dont have any book", bg='black', fg='white', font=('Courier', 15)).place( relx=0.30, rely=0.25, relwidth=0.50, relheight=0.1)
-        self.ustawStatusBar("waiting...")
+        self.setStatusBar("waiting...")
         # inner funkction showing new widow and allowing to look at the book and do some stuff with it
         def SearchBook():
             global bookImage
-            self.ustawStatusBar("looking for book...")
+            self.setStatusBar("looking for book...")
             # importing book from data base
             bookName = BookNameBut.get()
             connection = sqlite3.connect('Library_dataBase.db')
@@ -175,7 +176,7 @@ class UserActions(tk.Frame):
         Button(self.frame, text="Search", bg='black', fg='white', command=SearchBook).place(relx=0.60, rely=0.1,relwidth=0.15, relheight=0.03)
 
 
-    def ustawStatusBar(self, txt):
+    def setStatusBar(self, txt):
         self.statusbar["text"] = txt
 
     def clearStatusBar(self):
@@ -210,7 +211,7 @@ class UserActions(tk.Frame):
 
     #function marking book as readed
     def SetAsReaded(self):
-        self.ustawStatusBar("marking as readed")
+        self.setStatusBar("marking as readed")
         if self.User != None:
             if self.book.name in self.User.ReadedBooks.keys():
                 if not self.User.ReadedBooks[self.book.name][1]:
@@ -225,7 +226,7 @@ class UserActions(tk.Frame):
 
     # function allowed to adding books to User account
     def AddToUserBooks(self):
-        self.ustawStatusBar("Adding to User books...")
+        self.setStatusBar("Adding to User books...")
         if self.book.name != None and self.book.name not in self.User.ReadedBooks.keys():
             self.User.ReadedBooks[self.book.name] = (self.book,False)
             tk.messagebox.showinfo('Info', 'succesfully added ' + self.User.ReadedBooks[self.book.name][0].name + ' to your readed list')
@@ -235,42 +236,48 @@ class UserActions(tk.Frame):
 
     #function allowed to rating books by user
     def rateBook(self):
-        self.ustawStatusBar("Adding user rating")
         top2 = tk.Toplevel()
         Label(top2, text="How do you rate these book? (1-10)").grid(row=1, column=3)
         ratingEn = Entry(top2,width=30)
         ratingEn.grid(row=2,column=3)
+        #rating books
         def inside():
             try:
                 rate = int(ratingEn.get())
                 if rate > 0 and rate < 11:
-                    self.book.rating = round((self.book.rating * self.book.readed + (rate/10))/(self.book.readed + 1),2)
+                    self.book.rating = round((self.book.rating + (rate/10))/(self.book.readed + 1),2)
                     self.book.UpdateBook()
+                    tk.messagebox.showinfo('Info', 'Thank you, for yours rating')
+                    top2.destroy()
                 else:
                     tk.messagebox.showinfo('Info', 'wrong rating')
             except:
                 tk.messagebox.showinfo('Info', 'Wrong Value!! Try again')
         Button(top2, text="Rate", command=inside).grid(row=3, column=1)
         Button(top2, text="Exit", command=top2.destroy).grid(row=3, column=4)
+        self.ustawStatusBar("Adding user rating")
 
-    #non use fuction adding some books to data base
+    #non use fuction adding book by user to data base
     def addSomeBooks(self):
         global background_image
-        self.ustawStatusBar("waiting for data...")
+        self.setStatusBar("waiting for data...")
         my_filetypes = [('all files', '.*'), ('text files', '.txt')]
-        top3 = tk.Toplevel()
-        top3.geometry("1000x600")
-        background_image = ImageTk.PhotoImage(Image.open('pictures/background.jpg').resize((1400, 1000), Image.Resampling.LANCZOS))
+        top3 = Frame(self.parent)
+        top3.place(relx=0, rely=0.03, relwidth=1, relheight=0.94)
+        background_image = ImageTk.PhotoImage(Image.open('pictures/library.png').resize((3200,1100), Image.Resampling.LANCZOS))
         Canvas1 = tk.Canvas(top3)
         Canvas1.create_image(300, 340, image=background_image)
         Canvas1.config(bg="white", width=700, height=800)
         Canvas1.pack(expand=True, fill='both')
         self.path = ''
         book1 = None
+        #inner function getting path to image from user
         def getPath():
             answer = filedialog.askopenfilename(parent=top3,initialdir=os.getcwd(),title="Please select a Image:",filetypes=my_filetypes)
-            self.path = answer
-            print('jołjoł')
+            if answer != '':
+                self.path = answer
+            else:
+                tk.messagebox.showinfo('Info', 'Try Again')
         Label(top3,text='What book you want to add? ').place(relx=0.02, rely=0.1, relwidth=0.22, relheight=0.05)
         Label(top3, text='Enter Name of book ').place(relx=0.10, rely=0.25, relwidth=0.22, relheight=0.1)
         Label(top3, text='Enter Author of book ').place(relx=0.10, rely=0.35, relwidth=0.22, relheight=0.1)
@@ -281,7 +288,9 @@ class UserActions(tk.Frame):
         nameEn.place(relx=0.32, rely=0.25, relwidth=0.50, relheight=0.1)
         autrorEn.place(relx=0.32, rely=0.35, relwidth=0.50, relheight=0.1)
         numofpagesEn.place(relx=0.32, rely=0.45, relwidth=0.50, relheight=0.1)
+        #inner function adding books to data base
         def createBook():
+            self.setStatusBar("creating book... ")
             name = nameEn.get()
             autror = autrorEn.get()
             numofpages = numofpagesEn.get()
@@ -302,13 +311,14 @@ class UserActions(tk.Frame):
                         tk.messagebox.showinfo('Info', 'Added sucesfully')
                         book1.SaveBook()
                         self.path = ''
-                        top3.destroy()
+                        self.WorkPlace()
                     except:
                         tk.messagebox.showinfo('Info', 'Wrong input')
+                        self.setStatusBar("Wrong input")
                 else:
                     tk.messagebox.showinfo('Info', 'Wrong input')
         Button(top3, text="Add Book Image", command=getPath).place(relx=0.7, rely=0.60, relwidth=0.1, relheight=0.1)
-        Button(top3, text="Back", command=top3.destroy).place(relx=0.45, rely=0.60, relwidth=0.15, relheight=0.1)
+        Button(top3, text="Back", command=self.WorkPlace).place(relx=0.45, rely=0.60, relwidth=0.15, relheight=0.1)
         Button(top3, text="Add Book", command=createBook).place(relx=0.3, rely=0.60, relwidth=0.1, relheight=0.1)
 
     # load user from data base
@@ -327,6 +337,7 @@ class UserActions(tk.Frame):
         connection.commit()
         connection.close()
 
+    #function chcecking corection of input text
     def correctionOftext(self, txt):
         if txt.isprintable():
             for i in txt:
